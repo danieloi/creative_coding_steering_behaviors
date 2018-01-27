@@ -1,1 +1,174 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>no_74_clock</title>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/p5.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/addons/p5.dom.min.js"></script>
+	<script>
+        class Vehicle {
+            constructor(x, y) {
+                this.pos = createVector(random(innerWidth), random(innerHeight));
+                this.vel = p5.Vector.random2D();
+                this.acc = createVector();
+                this.target = createVector(x, y);
+                this.r = 8;
+                this.maxSpeed = 10;
+                this.maxForce = 1;
+            }
+
+            behaviors() {
+                var arrive = this.arrive(this.target);
+                var mouse = createVector(mouseX, mouseY);
+                var flee = this.flee(mouse);
+                
+                arrive.mult(1);
+                flee.mult(5);
+                
+                this.applyForce(arrive);
+                this.applyForce(flee);
+            }
+
+            applyForce(f) {
+                this.acc.add(f);
+            }
+
+            flee(target) {
+                var desired = p5.Vector.sub(target, this.pos);
+                var d = desired.mag();
+                
+                if(d < 50){
+                    desired.setMag(this.maxSpeed);
+                    desired.mult(-1);
+                    var steer = p5.Vector.sub(desired, this.vel);
+                    steer.limit(this.maxForce);
+                    return steer;
+                }else{
+                    return createVector(0, 0);
+                }
+            }
+
+            arrive(target) {
+                var desired = p5.Vector.sub(target, this.pos);
+                var d = desired.mag();
+                var speed = this.maxSpeed;
+                if(d < 100){
+                    var speed = map(d, 0, 100, 0, this.maxSpeed);
+                }
+                
+                desired.setMag(speed);
+                var steer = p5.Vector.sub(desired, this.vel);
+                steer.limit(this.maxForce);
+                return steer;
+            }
+
+            show() {
+                stroke(255);
+                strokeWeight(4);
+                point(this.pos.x, this.pos.y);
+            }
+
+            update() {
+                this.pos.add(this.vel);
+                this.vel.add(this.acc);
+                this.acc.mult(0);
+            }
+        }
+
+    </script>
+	<script>
+        var font;
+        var vehicles = [];
+        var title;
+        var points;
+        var canvas;
+        var central_X; //x-co-ordinate for canvas to be placed in the middle of the window
+        var central_Y; //y-co-ordinate for canvas to be placed in the middle of the window
+
+        function preload(){
+            font = loadFont('stick&kick.ttf');
+        }
+
+        function setup() {
+            canvas = createCanvas(360, 360);
+            central_X = (innerWidth/2) - (width/2);
+            central_Y = (innerHeight/2) - (height/2);
+            canvas.position(central_X, central_Y);
+            background(51);
+            title = createInput('Change & hit \'ENTER\'');
+            title.position(central_X, central_Y);
+            title.mouseClicked(clearContent);
+            title.changed(updatePoints);
+        //    textFont(font);
+        //    textSize(192);
+        //    fill(255);
+        //    noStroke();
+        //    text('CODING', 40, 200);
+            
+            points = font.textToPoints('HOVER / TAP', 10, 180, 60, {sampleFactor: .2, simplifyThreshold: 0});
+        //    console.log(points);
+            
+            for(var i = 0; i < points.length; i++){
+                var pt = points[i];
+                var vehicle = new Vehicle(pt.x, pt.y);
+                vehicles.push(vehicle);
+        //        stroke(255);
+        //        strokeWeight(4);
+        //        point(pt.x, pt.y);
+            }
+        }
+
+
+        function clearContent() {
+            if (this.value() == 'Change & hit \'ENTER\'') {
+                this.value('');
+            }
+        }
+
+        function updatePoints(){
+            vehicles.splice(0, vehicles.length-1);
+            points = font.textToPoints(title.value(), 10, 180, 60, {sampleFactor: .2, simplifyThreshold: 0});
+            //   console.log(points);
+
+            for(var i = 0; i < points.length; i++){
+                var pt = points[i];
+                var vehicle = new Vehicle(pt.x, pt.y);
+                vehicles.push(vehicle);
+        //        stroke(255);
+        //        strokeWeight(4);
+        //        point(pt.x, pt.y);
+            }
+        }
+
+        function draw() {
+            background(30);
+            
+            for(var i = 0; i < vehicles.length; i++){
+                var v = vehicles[i];
+                v.update();
+                v.show();
+                v.behaviors();
+            }
+        }
+    </script>
+
+	<style>
+		body {
+			margin:0;
+			padding:0;
+			overflow: hidden;
+		}
+		canvas {
+			margin: auto;
+		}
+		
+	</style>
+</head>
+<body>
+</body>
+</html>
