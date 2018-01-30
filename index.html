@@ -6,7 +6,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title>no_74_clock</title>
+	<title>no_59_steering_behaviors</title>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/p5.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/addons/p5.dom.min.js"></script>
@@ -95,7 +95,7 @@
         }
 
         function setup() {
-            canvas = createCanvas(360, 360);
+            canvas = createCanvas(330, 330);
             central_X = (innerWidth/2) - (width/2);
             central_Y = (innerHeight/2) - (height/2);
             canvas.position(central_X, central_Y);
@@ -110,7 +110,7 @@
         //    noStroke();
         //    text('CODING', 40, 200);
             
-            points = font.textToPoints('HOVER / TAP', 10, 180, 60, {sampleFactor: .2, simplifyThreshold: 0});
+            points = font.textToPoints('HOVER / TAP', 8, 165, 50, {sampleFactor: .2, simplifyThreshold: 0});
         //    console.log(points);
             
             for(var i = 0; i < points.length; i++){
@@ -132,7 +132,7 @@
 
         function updatePoints(){
             vehicles.splice(0, vehicles.length-1);
-            points = font.textToPoints(title.value(), 10, 180, 60, {sampleFactor: .2, simplifyThreshold: 0});
+            points = font.textToPoints(title.value(), 8, 165, 50, {sampleFactor: .2, simplifyThreshold: 0});
             //   console.log(points);
 
             for(var i = 0; i < points.length; i++){
